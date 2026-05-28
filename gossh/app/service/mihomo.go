@@ -31,7 +31,7 @@ const (
 	mihomoInstallVersionURL = mihomoDataBaseURL + "mihomo_version.txt"
 	mihomoInstallBinaryURL  = mihomoDataBaseURL + "mihomo-linux-arm64"
 	mihomoInstallMmShURL    = mihomoDataBaseURL + "mm.sh"
-	mihomoDefaultDir        = "/data/kano_plugins/mihomo"
+	mihomoDefaultDir        = "/data/plugins/Mihomo"
 	mihomoConnTimeout       = 3 * time.Second
 )
 
@@ -507,7 +507,7 @@ func parseMihomoConfig(configPath string) (extCtrl string, secret string) {
 	}
 	// ":9999" → "192.168.0.1:9999/ui"
 	if strings.HasPrefix(extCtrl, ":") {
-		extCtrl = "192.168.0.1" + extCtrl + "/ui"
+		extCtrl = "192.168.254.254" + extCtrl + "/ui"
 	}
 	return extCtrl, secret
 }
