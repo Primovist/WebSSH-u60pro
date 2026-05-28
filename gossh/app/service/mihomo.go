@@ -24,7 +24,7 @@ import (
 // ─────────────────────────── 常量 ───────────────────────────
 
 const (
-	mihomoGithubRepo        = "Jack-bin183/WebSSH-u60pro"
+	mihomoGithubRepo        = "primovist/WebSSH-u60pro"
 	mihomoDataTag           = "latest-data"
 	mihomoDataBaseURL       = "https://github.com/" + mihomoGithubRepo + "/releases/download/" + mihomoDataTag + "/"
 	mihomoVersionFileURL    = mihomoDataBaseURL + "data_version.txt"
@@ -505,9 +505,9 @@ func parseMihomoConfig(configPath string) (extCtrl string, secret string) {
 			secret = strings.Trim(val, `"'`)
 		}
 	}
-	// ":9999" → "192.168.254.254:9999/ui"
+	// ":9999" → "192.168.0.1:9999/ui"
 	if strings.HasPrefix(extCtrl, ":") {
-		extCtrl = "192.168.254.254" + extCtrl + "/ui"
+		extCtrl = "192.168.0.1" + extCtrl + "/ui"
 	}
 	return extCtrl, secret
 }
