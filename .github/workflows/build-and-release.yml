@@ -101,7 +101,7 @@ jobs:
           git add version.txt
           git commit -m "update version.txt to ${VERSION}"
 
-          git remote add origin https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/${{ github.repository }}.git
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push -f origin version
 
       # 11. 创建 Release（直接上传原始文件）
@@ -115,4 +115,4 @@ jobs:
           files: |
             gossh/webssh_${{ steps.version.outputs.version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
