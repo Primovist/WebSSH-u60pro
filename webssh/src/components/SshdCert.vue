@@ -2,25 +2,25 @@
   <el-tab-pane label="SSHD证书管理" name="sshdCert">
     <!-- ========================================= -->
     <el-card>
-      <el-row>
-        <el-table :data="data.cert_list" style="width: 100%" :show-overflow-tooltip="true">
-          <el-table-column fixed sortable prop="name" label="标题"></el-table-column>
+      <el-row class="management-table-scroll">
+        <el-table class="management-table" :data="data.cert_list" :show-overflow-tooltip="true">
+          <el-table-column sortable prop="name" label="标题" width="160"></el-table-column>
           <el-table-column sortable prop="desc_info" label="备注" width="200"></el-table-column>
-          <el-table-column sortable prop="is_enable" label="是否启用"></el-table-column>
+          <el-table-column sortable prop="is_enable" label="是否启用" width="120"></el-table-column>
           <el-table-column sortable prop="expiry_at" label="过期时间" width="180"></el-table-column>
-          <el-table-column fixed="right" label="操作">
+          <el-table-column label="操作" width="180">
             <template #header>
-              <el-button type="primary" @click="addCert">新增</el-button>
-              <el-button type="primary" @click="getCertList(0, 10000)">刷新</el-button>
+              <div class="table-actions"><el-button type="primary" @click="addCert">新增</el-button>
+              <el-button type="primary" @click="getCertList(0, 10000)">刷新</el-button></div>
             </template>
             <template #default="scope">
-              <el-button type="success" @click="editCert(scope.row)">编辑</el-button>
+              <div class="table-actions"><el-button type="success" @click="editCert(scope.row)">编辑</el-button>
               <el-popconfirm confirmButtonText="删除" cancelButtonText="取消" icon="el-icon-info" iconColor="red"
                 title="确定删除吗" @confirm="deleteCertById(scope.row.id)">
                 <template #reference>
                   <el-button type="danger">删除</el-button>
                 </template>
-              </el-popconfirm>
+              </el-popconfirm></div>
             </template>
           </el-table-column>
         </el-table>

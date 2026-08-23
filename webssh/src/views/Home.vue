@@ -45,34 +45,13 @@
                   </el-popover>
 
                   <!-- 命令收藏列表 -->
-                  <el-popover
-                    placement="bottom"
-                    trigger="click"
-                    :width="commandFavoritesPopoverWidth"
-                    popper-class="command-favorites-popover">
+                  <el-popover placement="bottom" trigger="click" :width="'95%'" :style="{ maxWidth: '800px' }">
                     <template #reference>
                       <el-button type="primary" :icon="Star"></el-button>
                     </template>
 
-                    <div class="command-favorites-content">
-                      <template v-if="isMobile">
-                        <el-input v-model="searchCmdNote" clearable placeholder="名称搜索" />
-                        <div class="command-favorites-mobile-list">
-                          <div v-for="item in filterCmdNoteTable" :key="item.id" class="command-favorite-card">
-                            <strong>{{ item.cmd_name }}</strong>
-                            <pre>{{ item.cmd_data }}</pre>
-                            <div class="command-favorite-actions">
-                              <el-popconfirm confirmButtonText="删除" cancelButtonText="取消" title="确定删除吗" @confirm="delCmdNote(item.id)">
-                                <template #reference><el-button size="small" type="danger">删除</el-button></template>
-                              </el-popconfirm>
-                              <el-button size="small" type="warning" @click="execCmdAllSession(item)">发送所有会话</el-button>
-                              <el-button size="small" type="primary" @click="execCmdCurrentSession(item)">发送当前会话</el-button>
-                            </div>
-                          </div>
-                          <div v-if="filterCmdNoteTable.length === 0" class="command-favorites-empty">暂无收藏命令</div>
-                        </div>
-                      </template>
-                      <el-table v-else :data="filterCmdNoteTable" :height="260" style="min-width: 600px;">
+                    <div style="overflow-x: auto;">
+                      <el-table :data="filterCmdNoteTable" :height="260" style="min-width: 600px;">
                         <el-table-column sortable width="180" :show-overflow-tooltip="true" property="cmd_name"
                           label="名称"></el-table-column>
 
@@ -809,7 +788,7 @@
               v-model="data.manage_dialog_visible"
               :width="'95%'"
               :style="{ maxWidth: '1040px', top: '20px' }"
-              custom-class="modern-dialog system-manage-dialog"
+              class="modern-dialog system-manage-dialog"
             >
               <Manage></Manage>
             </el-dialog>
@@ -1503,10 +1482,6 @@ const windowWidth = ref(window.innerWidth)
 
 const isMobile = computed(() => windowWidth.value <= 768)
 
-const commandFavoritesPopoverWidth = computed(() =>
-  isMobile.value ? Math.max(280, windowWidth.value - 24) : 800
-)
-
 const tableHeight = computed(() => {
   const rows = Math.max(filterHostTable.value.length, 1);
   const contentHeight = 52 + rows * 48;
@@ -1521,6 +1496,7 @@ const tableHeight = computed(() => {
 
 function updateWindowWidth() {
   windowWidth.value = window.innerWidth
+  syncMainNavTopOffset()
 }
 
 /**
@@ -2740,23 +2716,29 @@ function setCurrentAcitveHost(sessionId: string) {
 }
 
 function setNavCollapsed(collapsed: boolean) {
-  const shouldOffsetMain = !collapsed
-    && data.host_tabs.length === 0
-    && window.scrollY <= 1;
   data.navCollapsed = collapsed;
+  syncMainNavTopOffset();
   nextTick(() => {
-    if (shouldOffsetMain) {
+    windowResize();
+    window.setTimeout(windowResize, 80);
+  });
+}
+
+function syncMainNavTopOffset() {
+  if (data.navCollapsed || data.host_tabs.length !== 0) {
+    mainNavTopOffset.value = 0;
+    return;
+  }
+
+  nextTick(() => {
+    window.requestAnimationFrame(() => {
       const header = topNavHeaderRef.value?.$el ?? topNavHeaderRef.value;
       const headerHeight = header instanceof HTMLElement
         ? Math.ceil(header.getBoundingClientRect().height)
         : 0;
-      // 展开箭头向导航栏下方延伸 15px，继续保留同等安全距离。
-      mainNavTopOffset.value = headerHeight > 0 ? headerHeight + 15 : 0;
-    } else {
-      mainNavTopOffset.value = 0;
-    }
-    windowResize();
-    window.setTimeout(windowResize, 80);
+      // 固定导航脱离文档流；展开时仅给主页留出导航栏本体的实际高度。
+      mainNavTopOffset.value = headerHeight;
+    });
   });
 }
 
@@ -3022,7 +3004,9 @@ const terminalBackground = computed(() => {
 }
 
 .main-page-shell {
+  flex: 1 1 100%;
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   transition: padding-top 0.2s ease;
 }
@@ -3574,69 +3558,6 @@ const terminalBackground = computed(() => {
   -webkit-overflow-scrolling: touch;
 }
 
-.command-favorites-content {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-:global(.command-favorites-popover.el-popper) {
-  max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  box-sizing: border-box;
-}
-
-.command-favorites-mobile-list {
-  max-height: min(60dvh, 420px);
-  margin-top: 10px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.command-favorite-card {
-  min-width: 0;
-  padding: 10px 0;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.command-favorite-card:last-child {
-  border-bottom: 0;
-}
-
-.command-favorite-card strong,
-.command-favorite-card pre {
-  display: block;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.command-favorite-card pre {
-  max-height: 96px;
-  margin: 7px 0 10px;
-  overflow: auto;
-  color: #606266;
-  font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  white-space: pre-wrap;
-}
-
-.command-favorite-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.command-favorite-actions :deep(.el-button) {
-  width: 100%;
-  min-width: 0;
-  margin-left: 0;
-  padding-inline: 6px;
-}
-
-.command-favorites-empty {
-  padding: 24px 0;
-  color: #909399;
-  text-align: center;
-}
-
 @media (max-width: 768px) {
   .nav .right {
     text-align: left !important;
@@ -3741,5 +3662,73 @@ const terminalBackground = computed(() => {
     padding: 0px 11px;
   }
 
+}
+</style>
+
+<!-- el-dialog / el-popover 会 Teleport 到 body，移动端关键尺寸必须使用非 scoped 样式。 -->
+<style>
+@media (max-width: 768px) {
+  .system-manage-dialog.el-dialog {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: calc(10px + env(safe-area-inset-left, 0px));
+    display: flex;
+    flex-direction: column;
+    width: auto !important;
+    max-width: none !important;
+    height: auto;
+    max-height: none;
+    margin: 0 !important;
+    overflow: hidden;
+    border-radius: 14px;
+  }
+
+  .system-manage-dialog.el-dialog .el-dialog__header {
+    flex: 0 0 auto;
+    padding: 14px 16px 12px;
+  }
+
+  .system-manage-dialog.el-dialog .el-dialog__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .system-manage-dialog .manage-container,
+  .system-manage-dialog .el-main,
+  .system-manage-dialog .el-tabs,
+  .system-manage-dialog .el-tabs__content,
+  .system-manage-dialog .el-tab-pane {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .system-manage-dialog .el-main {
+    padding: 0;
+  }
+
+  .system-manage-dialog .el-card__body {
+    padding: 8px;
+  }
+
+  .system-manage-dialog .el-button-group {
+    display: flex;
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .system-manage-dialog .el-button-group > .el-button,
+  .system-manage-dialog .el-button + .el-button {
+    min-width: 0;
+    margin-left: 0;
+  }
 }
 </style>

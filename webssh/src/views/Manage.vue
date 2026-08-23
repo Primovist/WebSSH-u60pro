@@ -61,15 +61,81 @@ function logout() {
   min-width: 0;
 }
 
+.manage-container :deep(.management-toolbar-scroll),
+.manage-container :deep(.management-table-scroll) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.manage-container :deep(.management-toolbar) {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  align-items: center;
+  gap: 18px;
+  white-space: nowrap;
+}
+
+.manage-container :deep(.management-toolbar .toolbar-item) {
+  flex: 0 0 auto;
+}
+
+.manage-container :deep(.management-toolbar .toolbar-search) {
+  width: 400px;
+}
+
+.manage-container :deep(.management-toolbar .toolbar-input) {
+  width: 220px;
+}
+
+.manage-container :deep(.management-toolbar .el-form-item) {
+  margin-bottom: 0;
+  flex-wrap: nowrap;
+}
+
+.manage-container :deep(.management-table) {
+  width: 100%;
+  min-width: 940px;
+}
+
+.manage-container :deep(.management-table.audit-table) {
+  min-width: 1560px;
+}
+
+.manage-container :deep(.management-table .cell),
+.manage-container :deep(.management-table th.el-table__cell),
+.manage-container :deep(.management-table td.el-table__cell) {
+  white-space: nowrap;
+}
+
+.manage-container :deep(.table-actions) {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.manage-container :deep(.table-actions .el-button + .el-button) {
+  margin-left: 0;
+}
+
 @media (max-width: 768px) {
   .manage-container :deep(.el-main) {
     padding: 0;
   }
 
   .manage-container :deep(.el-tabs__nav-wrap) {
-    overflow-x: auto;
+    padding: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
 
   .manage-container :deep(.el-tabs__nav-wrap::-webkit-scrollbar) {
@@ -77,17 +143,28 @@ function logout() {
   }
 
   .manage-container :deep(.el-tabs__nav-scroll) {
+    overflow: visible !important;
     width: max-content;
     min-width: 100%;
   }
 
   .manage-container :deep(.el-tabs__nav) {
+    display: flex;
+    width: max-content;
     float: none;
+    transform: none !important;
     white-space: nowrap;
   }
 
   .manage-container :deep(.el-tabs__item) {
+    flex: 0 0 auto;
+    box-sizing: border-box;
     padding-inline: 14px;
+  }
+
+  .manage-container :deep(.el-tabs__nav-prev),
+  .manage-container :deep(.el-tabs__nav-next) {
+    display: none;
   }
 }
 </style>

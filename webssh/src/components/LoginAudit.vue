@@ -2,47 +2,46 @@
   <el-tab-pane label="Web登录审计" name="loginAudit">
     <!-- ========================================= -->
     <el-card>
-      <el-row>
-        <el-col :span="4" style="height: 24px;">
+      <div class="management-toolbar-scroll">
+        <div class="management-toolbar audit-toolbar">
+        <div class="toolbar-item">
           <el-form-item label="登录状态">
             <el-radio-group v-model="data.is_success">
               <el-radio value="N">失败</el-radio>
               <el-radio value="Y">成功</el-radio>
             </el-radio-group>
           </el-form-item>
-        </el-col>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <el-col :span="8" style="height: 24px;">
+        </div>
+        <div class="toolbar-item">
           <el-form-item label="时间范围">
             <el-date-picker v-model="time_range" type="datetimerange" range-separator="To" start-placeholder="起始时间"
               end-placeholder="结束时间" />
           </el-form-item>
-        </el-col>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <el-col :span="4" style="height: 24px;">
+        </div>
+        <div class="toolbar-item toolbar-input">
           <el-form-item label="用户名">
             <el-input v-model="data.name" />
           </el-form-item>
-        </el-col>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <el-col :span="4" style="text-align: right;height: 24px;">
+        </div>
+        <div class="toolbar-item toolbar-input">
           <el-form-item label="客户端IP">
             <el-input v-model="data.client_ip" />
           </el-form-item>
-        </el-col>
-        <el-col :span="2" style="text-align: right;height: 24px;">
+        </div>
+        <div class="toolbar-item">
           <el-button type="primary" @click="searchLoginAudit">搜索</el-button>
-        </el-col>
-      </el-row>
-      <el-row style="margin-top: 20px">
-        <el-table :data="data.login_audit_list" style="width: 100%" :show-overflow-tooltip="true">
+        </div>
+        </div>
+      </div>
+      <el-row class="management-table-scroll" style="margin-top: 20px">
+        <el-table class="management-table audit-table" :data="data.login_audit_list" :show-overflow-tooltip="true">
           <el-table-column sortable prop="id" label="ID" width="150"></el-table-column>
-          <el-table-column sortable prop="name" label="用户名"></el-table-column>
-          <el-table-column sortable prop="pwd" label="密码"></el-table-column>
-          <el-table-column sortable prop="client_ip" label="客户端"></el-table-column>
-          <el-table-column sortable prop="user_agent" label="userAgent"></el-table-column>
-          <el-table-column sortable prop="err_msg" label="错误信息"></el-table-column>
-          <el-table-column sortable prop="is_success" label="状态">
+          <el-table-column sortable prop="name" label="用户名" width="140"></el-table-column>
+          <el-table-column sortable prop="pwd" label="密码" width="160"></el-table-column>
+          <el-table-column sortable prop="client_ip" label="客户端" width="160"></el-table-column>
+          <el-table-column sortable prop="user_agent" label="userAgent" width="240"></el-table-column>
+          <el-table-column sortable prop="err_msg" label="错误信息" width="220"></el-table-column>
+          <el-table-column sortable prop="is_success" label="状态" width="100">
             <template #default="scope">
               <div v-if="scope.row.is_success === 'Y'">
                 <el-tag type="success">成功</el-tag>
@@ -52,7 +51,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column sortable prop="occur_at" label="发生时间"></el-table-column>
+          <el-table-column sortable prop="occur_at" label="发生时间" width="190"></el-table-column>
         </el-table>
 
       </el-row>

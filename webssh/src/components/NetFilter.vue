@@ -2,8 +2,9 @@
   <el-tab-pane label="访问控制" name="netFilter">
     <!-- ========================================= -->
     <el-card>
-      <el-row>
-        <el-col :span="8" style="text-align: right;height: 24px;">
+      <div class="management-toolbar-scroll">
+        <div class="management-toolbar">
+        <div class="toolbar-item toolbar-search">
           <el-form-item label="搜索:">
             <el-input v-model="searchNetFilterName" style="max-width: 400px" placeholder="请输入策略名称"
               class="input-with-select">
@@ -16,18 +17,16 @@
               </template>
             </el-input>
           </el-form-item>
-        </el-col>
-        <el-col :span="2"></el-col>
-        <!-- <el-col :span="6"></el-col> -->
-        <el-col :span="6" style="height: 24px;">
+        </div>
+        <div class="toolbar-item">
           <el-form-item label="默认策略">
             <el-radio-group v-model="data.policy_conf">
               <el-radio value="N">拒绝</el-radio>
               <el-radio value="Y">允许</el-radio>
             </el-radio-group>
           </el-form-item>
-        </el-col>
-        <el-col :span="2" style="height: 24px;">
+        </div>
+        <div class="toolbar-item">
           <el-form-item label="">
             <el-popconfirm confirmButtonText="确定" cancelButtonText="取消" icon="el-icon-info" iconColor="red"
               title="确定修改策略,修改后可能导致不能连接?" @confirm="updatePolicyConf">
@@ -36,13 +35,14 @@
               </template>
             </el-popconfirm>
           </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row style="margin-top: 20px">
-        <el-table :data="filterHostTable" style="width: 100%" :show-overflow-tooltip="true">
-          <el-table-column fixed sortable prop="name" label="名称" width="200"></el-table-column>
-          <el-table-column sortable prop="cidr" label="CIDR"></el-table-column>
-          <el-table-column sortable prop="net_policy" label="策略">
+        </div>
+        </div>
+      </div>
+      <el-row class="management-table-scroll" style="margin-top: 20px">
+        <el-table class="management-table" :data="filterHostTable" :show-overflow-tooltip="true">
+          <el-table-column sortable prop="name" label="名称" width="200"></el-table-column>
+          <el-table-column sortable prop="cidr" label="CIDR" width="240"></el-table-column>
+          <el-table-column sortable prop="net_policy" label="策略" width="100">
             <template #default="scope">
               <div v-if="scope.row.net_policy === 'Y'">
                 <el-tag type="success">允许</el-tag>
@@ -54,19 +54,19 @@
           </el-table-column>
           <el-table-column sortable prop="policy_no" label="策略编号" width="120"></el-table-column>
           <el-table-column sortable prop="expiry_at" label="过期时间" width="180"></el-table-column>
-          <el-table-column fixed="right" label="操作">
+          <el-table-column label="操作" width="180">
             <template #header>
-              <el-button type="primary" @click="addNetFilter">新增</el-button>
-              <el-button type="primary" @click="getNetFilterList(0, 10000)">刷新</el-button>
+              <div class="table-actions"><el-button type="primary" @click="addNetFilter">新增</el-button>
+              <el-button type="primary" @click="getNetFilterList(0, 10000)">刷新</el-button></div>
             </template>
             <template #default="scope">
-              <el-button type="success" @click="editNetFilter(scope.row)">编辑</el-button>
+              <div class="table-actions"><el-button type="success" @click="editNetFilter(scope.row)">编辑</el-button>
               <el-popconfirm confirmButtonText="删除" cancelButtonText="取消" icon="el-icon-info" iconColor="red"
                 title="确定删除吗" @confirm="deleteNetFilterById(scope.row.id)">
                 <template #reference>
                   <el-button type="danger">删除</el-button>
                 </template>
-              </el-popconfirm>
+              </el-popconfirm></div>
 
             </template>
           </el-table-column>
