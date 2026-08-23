@@ -52,6 +52,42 @@ function logout() {
 
 <style scoped>
 .manage-container {
+  width: 100%;
+  min-width: 0;
   background-color: #fff;
+}
+
+.manage-container :deep(.el-main) {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .manage-container :deep(.el-main) {
+    padding: 0;
+  }
+
+  .manage-container :deep(.el-tabs__nav-wrap) {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .manage-container :deep(.el-tabs__nav-wrap::-webkit-scrollbar) {
+    display: none;
+  }
+
+  .manage-container :deep(.el-tabs__nav-scroll) {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .manage-container :deep(.el-tabs__nav) {
+    float: none;
+    white-space: nowrap;
+  }
+
+  .manage-container :deep(.el-tabs__item) {
+    padding-inline: 14px;
+  }
 }
 </style>
