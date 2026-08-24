@@ -1073,6 +1073,8 @@ let data = reactive({
 
 const topNavHeaderRef = ref<any>(null);
 const mainNavTopOffset = ref(0);
+let topNavResizeObserver: ResizeObserver | null = null;
+let navOffsetTimer = 0;
 
 /**
  * 调试
@@ -2717,10 +2719,12 @@ function setCurrentAcitveHost(sessionId: string) {
 
 function setNavCollapsed(collapsed: boolean) {
   data.navCollapsed = collapsed;
-  syncMainNavTopOffset();
   nextTick(() => {
+    syncMainNavTopOffset();
     windowResize();
     window.setTimeout(windowResize, 80);
+    if (navOffsetTimer) window.clearTimeout(navOffsetTimer);
+    navOffsetTimer = window.setTimeout(syncMainNavTopOffset, 120);
   });
 }
 
@@ -2732,8 +2736,9 @@ function syncMainNavTopOffset() {
 
   nextTick(() => {
     window.requestAnimationFrame(() => {
-      const header = topNavHeaderRef.value?.$el ?? topNavHeaderRef.value;
-      const headerHeight = header instanceof HTMLElement
+      const header = (topNavHeaderRef.value?.$el ?? topNavHeaderRef.value
+        ?? document.querySelector(".top-nav-header")) as HTMLElement | null;
+      const headerHeight = header?.getBoundingClientRect
         ? Math.ceil(header.getBoundingClientRect().height)
         : 0;
       // 固定导航脱离文档流；展开时仅给主页留出导航栏本体的实际高度。
@@ -2936,6 +2941,15 @@ onMounted(() => {
   getAllCmdNote();
   window.addEventListener("resize", debounce(windowResize, 200));
   window.addEventListener("resize", updateWindowWidth);
+  nextTick(() => {
+    const header = (topNavHeaderRef.value?.$el ?? topNavHeaderRef.value
+      ?? document.querySelector(".top-nav-header")) as HTMLElement | null;
+    if (header && typeof ResizeObserver !== "undefined") {
+      topNavResizeObserver = new ResizeObserver(syncMainNavTopOffset);
+      topNavResizeObserver.observe(header);
+    }
+    syncMainNavTopOffset();
+  });
   windowResize();
   window.onbeforeunload = function () {
     return "关闭吗";
@@ -2952,6 +2966,12 @@ onBeforeUnmount(() => {
   stopUpdateStatusPolling();
   disconnectAllSession();
   window.removeEventListener("resize", updateWindowWidth);
+  topNavResizeObserver?.disconnect();
+  topNavResizeObserver = null;
+  if (navOffsetTimer) {
+    window.clearTimeout(navOffsetTimer);
+    navOffsetTimer = 0;
+  }
   if (updateReloadTimer) {
     window.clearInterval(updateReloadTimer);
     updateReloadTimer = 0;
